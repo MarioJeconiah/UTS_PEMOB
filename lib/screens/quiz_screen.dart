@@ -1,125 +1,230 @@
+
 import 'package:flutter/material.dart';
 
-class QuizScreen extends StatelessWidget {
+class QuizScreen extends StatefulWidget {
   const QuizScreen({super.key});
 
   @override
+  State<QuizScreen> createState() => _QuizScreenState();
+}
+
+class _QuizScreenState extends State<QuizScreen> {
+  final List<Map<String, dynamic>> _questions = [
+    {
+      'question': 'Apa ibu kota negara Indonesia?',
+      'options': ['Bandung', 'Jakarta', 'Surabaya', 'Medan'],
+      'answer': 1,
+    },
+    {
+      'question': 'Berapakah hasil dari 5 + 3?',
+      'options': ['6', '7', '8', '9'],
+      'answer': 2,
+    },
+    {
+      'question': 'Bahasa yang digunakan Flutter adalah?',
+      'options': ['Java', 'Python', 'Dart', 'C++'],
+      'answer': 2,
+    },
+    {
+      'question': 'Manakah yang termasuk perangkat input?',
+      'options': ['Monitor', 'Printer', 'Speaker', 'Keyboard'],
+      'answer': 3,
+    },
+    {
+      'question': 'Apa kepanjangan dari CPU?',
+      'options': [
+        'Central Processing Unit',
+        'Computer Personal Unit',
+        'Central Program Utility',
+        'Control Processing User',
+      ],
+      'answer': 0,
+    },
+  ];
+
+  int _currentQuestionIndex = 0;
+  int? _selectedAnswer;
+  int _score = 0;
+  bool _isFinished = false;
+
+  Map<String, dynamic> get _currentQuestion =>
+      _questions[_currentQuestionIndex];
+
+  void _selectAnswer(int index) {
+    if (_selectedAnswer != null || _isFinished) {
+      return;
+    }
+
+    setState(() {
+      _selectedAnswer = index;
+
+      if (index == _currentQuestion['answer']) {
+        _score++;
+      }
+    });
+  }
+
+  void _nextQuestion() {
+    if (_selectedAnswer == null || _isFinished) {
+      return;
+    }
+
+    if (_currentQuestionIndex < _questions.length - 1) {
+      setState(() {
+        _currentQuestionIndex++;
+        _selectedAnswer = null;
+      });
+    } else {
+      setState(() {
+        _isFinished = true;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Kuis selesai! Skor kamu: $_score/${_questions.length}',
+          ),
+          duration: const Duration(seconds: 4),
+        ),
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final options =
+        _currentQuestion['options'] as List<String>;
+    final correctAnswer = _currentQuestion['answer'] as int;
+    final progress =
+        (_currentQuestionIndex + 1) / _questions.length;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Quiz App'),
         centerTitle: true,
-        leading: const Icon(Icons.quiz_rounded),
       ),
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(
-                  maxWidth: 600,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Question ${_currentQuestionIndex + 1} '
+                  'of ${_questions.length}',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.all(
-                    constraints.maxWidth * 0.06,
+                Text(
+                  '${(progress * 100).round()}%',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Row(
-                        mainAxisAlignment:
-                            MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Question 1 of 5',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium,
-                          ),
-                          Text(
-                            '20%',
-                            style: TextStyle(
-                              color: colorScheme.primary,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      const LinearProgressIndicator(
-                        value: 0.2,
-                        minHeight: 8,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(10),
-                        ),
-                      ),
-                      const SizedBox(height: 32),
-                      Icon(
-                        Icons.lightbulb_outline_rounded,
-                        size: 64,
-                        color: colorScheme.primary,
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        'Pertanyaan 1',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall
-                            ?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        'Apa ibu kota negara Indonesia?',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleLarge,
-                      ),
-                      const SizedBox(height: 28),
-                      _buildOption(context, 'A', 'Bandung'),
-                      _buildOption(context, 'B', 'Jakarta'),
-                      _buildOption(context, 'C', 'Surabaya'),
-                      _buildOption(context, 'D', 'Medan'),
-                      const SizedBox(height: 24),
-                      FilledButton(
-                        onPressed: () {},
-                        style: FilledButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 16,
-                          ),
-                        ),
-                        child: const Text('Berikutnya'),
-                      ),
-                    ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            LinearProgressIndicator(
+              value: progress,
+              minHeight: 8,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            const SizedBox(height: 32),
+            const Text(
+              'Pertanyaan',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              _currentQuestion['question'] as String,
+              style: const TextStyle(fontSize: 18),
+            ),
+            const SizedBox(height: 24),
+            ...List.generate(options.length, (index) {
+              return _buildOption(
+                index: index,
+                text: options[index],
+                correctAnswer: correctAnswer,
+              );
+            }),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _selectedAnswer == null || _isFinished
+                    ? null
+                    : _nextQuestion,
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16,
                   ),
+                ),
+                child: Text(
+                  _isFinished
+                      ? 'Kuis Selesai'
+                      : _currentQuestionIndex == _questions.length - 1
+                          ? 'Selesai'
+                          : 'Berikutnya',
                 ),
               ),
-            );
-          },
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildOption(
-    BuildContext context,
-    String label,
-    String answer,
-  ) {
+  Widget _buildOption({
+    required int index,
+    required String text,
+    required int correctAnswer,
+  }) {
+    final isSelected = _selectedAnswer == index;
+    final isCorrect = index == correctAnswer;
+    final hasAnswered = _selectedAnswer != null;
+
+    Color? cardColor;
+
+    if (hasAnswered && isCorrect) {
+      cardColor = Colors.green.withOpacity(0.15);
+    } else if (hasAnswered && isSelected && !isCorrect) {
+      cardColor = Colors.red.withOpacity(0.15);
+    }
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
+      color: cardColor,
       child: ListTile(
         leading: CircleAvatar(
-          child: Text(label),
+          backgroundColor: hasAnswered && isCorrect
+              ? Colors.green
+              : hasAnswered && isSelected
+                  ? Colors.red
+                  : null,
+          child: Text(
+            String.fromCharCode(65 + index),
+            style: TextStyle(
+              color: hasAnswered && (isCorrect || isSelected)
+                  ? Colors.white
+                  : null,
+            ),
+          ),
         ),
-        title: Text(answer),
-        trailing: const Icon(Icons.circle_outlined),
-        onTap: () {},
+        title: Text(text),
+        trailing: hasAnswered && isCorrect
+            ? const Icon(Icons.check_circle, color: Colors.green)
+            : hasAnswered && isSelected
+                ? const Icon(Icons.cancel, color: Colors.red)
+                : null,
+        onTap: () => _selectAnswer(index),
       ),
     );
   }
