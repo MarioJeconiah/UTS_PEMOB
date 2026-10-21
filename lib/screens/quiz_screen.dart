@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'result_screen.dart';
 
 class QuizScreen extends StatefulWidget {
   const QuizScreen({super.key});
@@ -45,13 +46,12 @@ class _QuizScreenState extends State<QuizScreen> {
   int _currentQuestionIndex = 0;
   int? _selectedAnswer;
   int _score = 0;
-  bool _isFinished = false;
 
   Map<String, dynamic> get _currentQuestion =>
       _questions[_currentQuestionIndex];
 
   void _selectAnswer(int index) {
-    if (_selectedAnswer != null || _isFinished) {
+    if (_selectedAnswer != null) {
       return;
     }
 
@@ -65,7 +65,7 @@ class _QuizScreenState extends State<QuizScreen> {
   }
 
   void _nextQuestion() {
-    if (_selectedAnswer == null || _isFinished) {
+    if (_selectedAnswer == null) {
       return;
     }
 
@@ -75,16 +75,21 @@ class _QuizScreenState extends State<QuizScreen> {
         _selectedAnswer = null;
       });
     } else {
-      setState(() {
-        _isFinished = true;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Kuis selesai! Skor kamu: $_score/${_questions.length}',
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ResultScreen(
+            score: _score,
+            totalQuestions: _questions.length,
+            onRetry: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const QuizScreen(),
+                ),
+              );
+            },
           ),
-          duration: const Duration(seconds: 4),
         ),
       );
     }
@@ -92,91 +97,128 @@ class _QuizScreenState extends State<QuizScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final options =
+    final List<String> options =
         _currentQuestion['options'] as List<String>;
-    final correctAnswer = _currentQuestion['answer'] as int;
-    final progress =
+    final int correctAnswer = _currentQuestion['answer'] as int;
+    final double progress =
         (_currentQuestionIndex + 1) / _questions.length;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quiz App'),
-        centerTitle: true,
+        title: const Text(
+          'Quiz App',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        centerTitle: false,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Question ${_currentQuestionIndex + 1} '
-                  'of ${_questions.length}',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight - 48,
                 ),
-                Text(
-                  '${(progress * 100).round()}%',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Pertanyaan '
+                          '${_currentQuestionIndex + 1} '
+                          'dari ${_questions.length}',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black54,
+                          ),
+                        ),
+                        Text(
+                          '${(progress * 100).round()}%',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    LinearProgressIndicator(
+                      value: progress,
+                      minHeight: 3,
+                      backgroundColor: const Color(0xFFEAEAEA),
+                      valueColor:
+                          const AlwaysStoppedAnimation<Color>(
+                        Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 36),
+                    Text(
+                      _currentQuestion['question'] as String,
+                      style: const TextStyle(
+                        fontSize: 23,
+                        height: 1.4,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 28),
+                    const Text(
+                      'Pilih satu jawaban.',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black54,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    ...List.generate(options.length, (index) {
+                      return _buildOption(
+                        index: index,
+                        text: options[index],
+                        correctAnswer: correctAnswer,
+                      );
+                    }),
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _selectedAnswer == null
+                            ? null
+                            : _nextQuestion,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          foregroundColor: Colors.white,
+                          disabledBackgroundColor:
+                              const Color(0xFFE5E5E5),
+                          disabledForegroundColor:
+                              Colors.black45,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 16,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        child: Text(
+                          _currentQuestionIndex ==
+                                  _questions.length - 1
+                              ? 'Selesai'
+                              : 'Berikutnya',
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            LinearProgressIndicator(
-              value: progress,
-              minHeight: 8,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            const SizedBox(height: 32),
-            const Text(
-              'Pertanyaan',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
               ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              _currentQuestion['question'] as String,
-              style: const TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 24),
-            ...List.generate(options.length, (index) {
-              return _buildOption(
-                index: index,
-                text: options[index],
-                correctAnswer: correctAnswer,
-              );
-            }),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _selectedAnswer == null || _isFinished
-                    ? null
-                    : _nextQuestion,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16,
-                  ),
-                ),
-                child: Text(
-                  _isFinished
-                      ? 'Kuis Selesai'
-                      : _currentQuestionIndex == _questions.length - 1
-                          ? 'Selesai'
-                          : 'Berikutnya',
-                ),
-              ),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );
@@ -187,43 +229,49 @@ class _QuizScreenState extends State<QuizScreen> {
     required String text,
     required int correctAnswer,
   }) {
-    final isSelected = _selectedAnswer == index;
-    final isCorrect = index == correctAnswer;
-    final hasAnswered = _selectedAnswer != null;
+    final bool hasAnswered = _selectedAnswer != null;
+    final bool isSelected = _selectedAnswer == index;
+    final bool isCorrect = index == correctAnswer;
 
-    Color? cardColor;
+    Color borderColor = const Color(0xFFE0E0E0);
+    Color backgroundColor = Colors.white;
 
-    if (hasAnswered && isCorrect) {
-      cardColor = Colors.green.withOpacity(0.15);
-    } else if (hasAnswered && isSelected && !isCorrect) {
-      cardColor = Colors.red.withOpacity(0.15);
+    if (isSelected) {
+      borderColor = Colors.black;
+      backgroundColor = const Color(0xFFF5F5F5);
     }
 
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      color: cardColor,
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        border: Border.all(
+          color: borderColor,
+          width: isSelected ? 1.5 : 1,
+        ),
+        borderRadius: BorderRadius.circular(4),
+      ),
       child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: hasAnswered && isCorrect
-              ? Colors.green
-              : hasAnswered && isSelected
-                  ? Colors.red
-                  : null,
-          child: Text(
-            String.fromCharCode(65 + index),
-            style: TextStyle(
-              color: hasAnswered && (isCorrect || isSelected)
-                  ? Colors.white
-                  : null,
-            ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 4,
+        ),
+        title: Text(
+          text,
+          style: const TextStyle(
+            fontSize: 15,
+            color: Colors.black,
           ),
         ),
-        title: Text(text),
-        trailing: hasAnswered && isCorrect
-            ? const Icon(Icons.check_circle, color: Colors.green)
-            : hasAnswered && isSelected
-                ? const Icon(Icons.cancel, color: Colors.red)
-                : null,
+        trailing: hasAnswered && isSelected
+            ? Text(
+                isCorrect ? 'Benar' : 'Salah',
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: Colors.black54,
+                ),
+              )
+            : null,
         onTap: () => _selectAnswer(index),
       ),
     );
