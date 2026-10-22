@@ -12,14 +12,12 @@ Aplikasi ini dibuat sebagai bagian dari tugas praktikum Pemrograman Mobile untuk
 ### Fitur-Fitur yang Tersedia
 
 1. **Antarmuka Kuis:** Menampilkan pertanyaan dan pilihan jawaban dalam tampilan yang sederhana.
-2. **Pilihan Ganda Interaktif:** Memungkinkan pengguna memilih satu jawaban untuk setiap pertanyaan.
+2. **Pilihan Ganda:** Memungkinkan pengguna memilih satu jawaban untuk setiap pertanyaan.
 3. **Navigasi Pertanyaan:** Memungkinkan pengguna berpindah dari satu pertanyaan ke pertanyaan berikutnya.
-4. **Perhitungan Skor:** Menghitung skor berdasarkan jawaban yang benar.
-5. **Hasil Kuis:** Menampilkan skor akhir, persentase, jumlah jawaban benar, dan jumlah jawaban salah.
-6. **Ulangi Kuis:** Memungkinkan pengguna mengerjakan kuis kembali setelah melihat hasil.
-7. **Antarmuka Responsif:** Menyesuaikan ukuran elemen UI dengan ukuran layar perangkat.
-8. **Custom Font dan Ilustrasi:** Menggunakan font Nunito Sans dan ilustrasi untuk mendukung tampilan aplikasi.
-9. **Pemulihan State:** Mendukung pemulihan progres kuis ketika terjadi perubahan konfigurasi perangkat, sesuai implementasi state restoration.
+4. **Hasil Kuis:** Menampilkan skor akhir, persentase, jumlah jawaban benar, dan jumlah jawaban salah.
+5. **Ulangi Kuis:** Memungkinkan pengguna mengerjakan kuis kembali setelah melihat hasil.
+6. **Antarmuka Responsif:** Menyesuaikan ukuran elemen UI dengan ukuran layar perangkat.
+7. **Custom Font dan Ilustrasi:** Menggunakan font Nunito Sans dan ilustrasi untuk mendukung tampilan aplikasi.
 
 ## Dokumentasi
 Video: https://drive.google.com/drive/folders/1JVUDCZLsM3t3Y0prvSR-T4WkedUGj_aF?usp=sharing
