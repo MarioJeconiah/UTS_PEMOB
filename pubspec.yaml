@@ -15,5 +15,15 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
 
+
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/images/quiz_illustration.jpg
+
+  fonts:
+    - family: NunitoSans
+      fonts:
+        - asset: "assets/fonts/NunitoSans-VariableFont_YTLC,opsz,wdth,wght.ttf"
+
