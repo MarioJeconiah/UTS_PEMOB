@@ -21,6 +21,7 @@ Aplikasi ini dibuat sebagai bagian dari tugas praktikum Pemrograman Mobile untuk
 
 ## Dokumentasi
 Video: https://drive.google.com/drive/folders/1JVUDCZLsM3t3Y0prvSR-T4WkedUGj_aF?usp=sharing
+
 Credit fonts: https://fonts.google.com/specimen/Nunito+Sans?utm_source=chatgpt.com&query=nunito+sans
 Screenshot: https://github.com/MarioJeconiah/UTS_PEMOB/tree/main/screenshots
 
