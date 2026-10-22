@@ -21,7 +21,6 @@ Aplikasi ini dibuat sebagai bagian dari tugas praktikum Pemrograman Mobile untuk
 
 ## Dokumentasi
 
-- **Video Demo:** [Lihat video aplikasi](https://drive.google.com/drive/folders/1JVUDCZLsM3t3Y0prvSR-T4WkedUGj_aF?usp=sharing)
-- **Credit Font:** [Nunito Sans — Google Fonts](https://fonts.google.com/specimen/Nunito+Sans)
-- **Screenshot:** [Lihat screenshot aplikasi](https://github.com/MarioJeconiah/UTS_PEMOB/tree/main/screenshots)
-
+- **Video Aplikasi:** https://drive.google.com/drive/folders/1JVUDCZLsM3t3Y0prvSR-T4WkedUGj_aF?usp=sharing
+- **Credit Font:** https://fonts.google.com/specimen/Nunito+Sans
+- **Screenshot:** https://github.com/MarioJeconiah/UTS_PEMOB/tree/main/screenshots
